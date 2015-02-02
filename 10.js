@@ -6,22 +6,30 @@ var primes = [];
 var sum = 0;
 var perimeter = 2000000;
 
-for (var i = 2; i < perimeter; i++) {
-  primes.push(i);
+for (var i = 0; i < perimeter; i++) {
+  primes.push(true);
 }
 
-for (var i = 0; i < primes.length; i++) {
-  for (var j = i + 1; j < primes.length; j++) {
-    if (primes[j] % primes[i] === 0) {
-      primes.splice(j, 1);
+for (var i = 2; i < Math.sqrt(perimeter); i++) {
+  if (primes[i]) {
+    for (var j = i * i; j < primes.length; j += i) {
+      primes[j] = false;
     }
   }
 }
 
-for (var i = 0; i < primes.length; i++) {
-  sum += primes[i];
+for (var i = 2; i < primes.length; i++) {
+  if (primes[i]) {
+    sum += i;
+  }
 }
 
 console.log(sum);
 
-// Trying to build a list of primes with Sieve of Eratosthenes, but this one's having trouble running for even 200,000 entries.
+// Congratulations, the answer you gave to problem 10 is correct.
+
+// You are the 170473rd person to have solved this problem.
+
+// You have earned 1 new award:
+
+// Decathlete: Solve ten consecutive problems
