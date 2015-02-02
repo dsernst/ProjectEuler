@@ -2,22 +2,26 @@
 
 // Find the sum of all the primes below two million.
 
-var primes = [2, 3, 5, 7];
-var sum = 17;
+var primes = [];
+var sum = 0;
 var perimeter = 2000000;
 
-for (var n = primes[primes.length - 1] + 1; n < perimeter; n++) {
-  for (var i = 0; i < primes.length; i++) {
-    if (n % primes[i] === 0) {
-      break;
+for (var i = 2; i < perimeter; i++) {
+  primes.push(i);
+}
+
+for (var i = 0; i < primes.length; i++) {
+  for (var j = i + 1; j < primes.length; j++) {
+    if (primes[j] % primes[i] === 0) {
+      primes.splice(j, 1);
     }
   }
-  if (i === primes.length) {
-    sum += n;
-    primes.push(n);
-  }
+}
+
+for (var i = 0; i < primes.length; i++) {
+  sum += primes[i];
 }
 
 console.log(sum);
 
-// Poor solution. It's having trouble finishing for perimeters much greater than 200,000.
+// Trying to build a list of primes with Sieve of Eratosthenes, but this one's having trouble running for even 200,000 entries.
