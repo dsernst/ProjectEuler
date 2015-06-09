@@ -73,7 +73,7 @@ function allSumsOfTwoNumbers(sortedArray, upperLimit) {
     sums[i] = false;
   }
   sortedArray.forEach(function (first, index, list) {
-    list.slice(index + 1).some(function (second) { // [].some let's us short-curcuit
+    list.slice(index).some(function (second) { // [].some let's us short-curcuit
       var sum = first + second;
       if (sum > upperLimit) {
         return true;
@@ -84,8 +84,8 @@ function allSumsOfTwoNumbers(sortedArray, upperLimit) {
   return sums;
 }
 
-// console.log(allSumsOfTwoNumbers([1, 3])); // [ false, false, false, false, true ], testing
-// console.log(allSumsOfTwoNumbers([1, 3, 5])); // [ false, false, false, false, true, false, true, false, true ], testing
+// console.log(allSumsOfTwoNumbers([1, 3])); // [ false, false, true, false, true ], testing
+// console.log(allSumsOfTwoNumbers([1, 3, 5])); // [ false, false, true, false, true, false, true, false, true ], testing
 
 function booleansToNumbers(arrayOfBooleans) {
   return arrayOfBooleans.reduce(function (memo, value, index) {
@@ -96,15 +96,17 @@ function booleansToNumbers(arrayOfBooleans) {
   }, []);
 }
 
-// console.log(booleansToNumbers(allSumsOfTwoNumbers([1, 3]))); // === [4], just testing
-// console.log(booleansToNumbers(allSumsOfTwoNumbers([1, 3, 5]))); // === [4, 6, 8], testing
-// console.log(booleansToNumbers(allSumsOfTwoNumbers([1, 3, 5, 10, 50]))); // === [ 4, 6, 8, 11, 13, 15, 51, 53, 55, 60 ]
+// console.log(booleansToNumbers(allSumsOfTwoNumbers([1, 3]))); // === [ 2, 4 ], just testing
+// console.log(booleansToNumbers(allSumsOfTwoNumbers([1, 3, 5]))); // === [ 2, 4, 6, 8 ], testing
+// console.log(booleansToNumbers(allSumsOfTwoNumbers([1, 3, 5, 10, 50]))); // === [ 2, 4, 6, 8, 10, 11, 13, 15, 20, 51, 53, 55, 60 ]
 
 var allSumsOfAbundantsWithinRange = allSumsOfTwoNumbers(abundantNumbersWithinRange, knownUpperLimit);
 var nonAbundantSums = allSumsOfAbundantsWithinRange.map(function flip(bool) {
   return !bool;
 });
 
-console.log(booleansToNumbers(nonAbundantSums).reduce(sum)); // 4179935
+console.log(booleansToNumbers(nonAbundantSums).reduce(sum)); // 4179871
 
-// Sorry, but the answer you gave appears to be incorrect.
+// Congratulations, the answer you gave to problem 23 is correct.
+
+// You are the 59827th person to have solved this problem.
