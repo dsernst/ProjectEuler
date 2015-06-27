@@ -77,29 +77,43 @@ Number.prototype.toEnglish = function () {
 };
 
 // Examples:
-console.log((1).toEnglish()); // > "one" --- Why did this need to be hardcoded in? Why was it broken?
-console.log((7).toEnglish()); // > "seven"
-console.log((575).toEnglish()); // > "fivehundredandseventyfive"
-console.log((262).toEnglish()); // > "twohundredandsixtytwo"
-console.log((101).toEnglish()); // > "onehundredandone"
+// console.log((1).toEnglish()); // > "one" --- Why did this need to be hardcoded in? Why was it broken?
+// console.log((7).toEnglish()); // > "seven"
+// console.log((575).toEnglish()); // > "fivehundredandseventyfive"
+// console.log((262).toEnglish()); // > "twohundredandsixtytwo"
+// console.log((101).toEnglish()); // > "onehundredandone"
 // NOTE: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters. The use of "and" when writing out numbers is in compliance with British usage.
 // console.log((342).toEnglish().length); // 23
 // console.log((115).toEnglish().length); // 20
 
 
 
-var charSum = 0;
-var i;
-for (i = 1; i <= 999; i++) {
-  charSum += i.toEnglish().length;
-}
-// console.log(charSum + 'onethousand'.length);
+// var charSum = 0;
+// var i;
+// for (i = 1; i <= 999; i++) {
+//   charSum += i.toEnglish().length;
+// }
+// // console.log(charSum + 'onethousand'.length);
 
 
-// If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
-charSum = 0;
-for (i = 1; i <= 5; i++) {
-  charSum += i.toEnglish().length;
-  console.log(charSum);
+// // If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+// charSum = 0;
+// for (i = 1; i <= 5; i++) {
+//   charSum += i.toEnglish().length;
+//   console.log(charSum);
+// }
+
+function lettersInAllNumberWords(upTo) {
+  var numLetters = 0;
+  var i;
+
+  for (i = 1; i <= upTo; i++) {
+    numLetters += i.toEnglish().length;
+  }
+
+  return numLetters;
 }
+
+console.log(lettersInAllNumberWords(5)); // 19, it works
+console.log(lettersInAllNumberWords(999) + "onethousand".length); // 21141
 
