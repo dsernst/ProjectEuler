@@ -13,18 +13,7 @@
 
 // Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
 
-var givenDecimalRepresentations = {
-  '2': '0.5',
-  '3': '0.(3)',
-  '4': '0.25',
-  '5': '0.2',
-  '6': '0.1(6)',
-  '7': '0.(142857)',
-  '8': '0.125',
-  '9': '0.(1)',
-  '10': '0.1'
-};
-var upperLimit = 25;
+var upperLimit = 1000;
 
 var precision = 150;
 var Decimal = require('decimal.js').config({precision: precision});
@@ -48,54 +37,62 @@ String.prototype.findCycleInString = function () {
   var cycleEnd = 1;
   searchSpace.split('').some(function (character, index) {
     var re = new RegExp(character, 'g');
-    re.test(searchSpace); // let the RegEx find itself first
-    if (!re.test(searchSpace)) { // find next occurance of this character
-      // we didn't see this character again: we must not be in a cycle yet
-      cycleStart++;
-      return;
+    re.test(searchSpace); // let the RegExp find itself first
+    var found, cycleLength, cycle, nextCycle;
+    while (re.test(searchSpace)) { // find next occurance of this character
+      found = re.lastIndex - 1;
+      cycleLength = found - index;
+      cycle = searchSpace.slice(index, found);
+      nextCycle = searchSpace.slice(found, found + cycleLength);
+      // console.log(index, re, found, cycleLength);
+      // console.log(cycle, nextCycle);
+      if (cycle === nextCycle) {
+        // we found a match!
+        cycleEnd = found;
+        return true;
+      }
     }
-    var found = re.lastIndex - 1;
-    var cycleLength = found - index;
-    var cycle = searchSpace.slice(index, found);
-    var nextCycle = searchSpace.slice(found, found + cycleLength);
-    // console.log(index, re, found, cycleLength);
-    // console.log(cycle, nextCycle);
-    if (cycle === nextCycle) {
-      // we found a match!
-      cycleEnd = found;
-      return true;
-    }
-    // var next = array.slice(index + 1).indexOf(character);
-    // if (next === -1) {
-    //   cycleStart++;
-    //   return;
+
+    // we didn't see this character again: we must not be in a cycle yet
+    cycleStart++;
+    return;
+
+    // if (index > 55) {
+    //   return true;
     // }
-    if (index > 25) {
-      return true;
-    }
 
   });
   return '0.' + searchSpace.slice(0, cycleStart) + '(' + searchSpace.slice(cycleStart, cycleEnd) + ')';
   // return cycleStart;
 };
 
-var Heap = require('heap');
-var maxHeap = new Heap(function largestCycleLength(a, b) {
-  return b.cycleLength - a.cycleLength;
-});
 
-var _ = require('lodash');
 
-_.range(2, upperLimit).forEach(function (d) {
+
+function testPatternFinder(d) {
   var info = {
     d: d,
     decimal: Decimal.ONE.dividedBy(d).toString(),
   };
-  info.cycle = info.decimal.findCycleInString();
+  info.cycle_ = info.decimal.findCycleInString();
+
   // if (!info.decimal.doesTerminate()) {
   console.log(info);
   // }
-  maxHeap.push(info);
+
+  return info;
+}
+
+// var Heap = require('heap');
+// var maxHeap = new Heap(function largestCycleLength(a, b) {
+//   return b.cycleLength - a.cycleLength;
+// });
+
+var _ = require('lodash');
+
+_.range(2, upperLimit).forEach(function (d) {
+  testPatternFinder(d);
+  // maxHeap.push(info);
 });
 
 // console.log('');
@@ -104,11 +101,6 @@ _.range(2, upperLimit).forEach(function (d) {
 // console.log(maxHeap.pop());
 // console.log(maxHeap.pop());
 // console.log(maxHeap.pop());
-
-function testPatternFinder(d) {
-  var decimal = Decimal.ONE.dividedBy(d).toString();
-  console.log(d, decimal.findCycleInString(precision), decimal);
-}
 
 // // cases of reciprocal cycles:
 // // 1. decimal terminates
@@ -126,4 +118,11 @@ function testPatternFinder(d) {
 // 14285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285
 // */
 
+// A tricky case with duplicate numbers
 // testPatternFinder(17); // 0.(0588235294117647)
+
+// Giving a false positive, cycle is ending too soon:
+// testPatternFinder(23);
+
+// False positive here, detects what looks like a cycle too early:
+testPatternFinder(84);
