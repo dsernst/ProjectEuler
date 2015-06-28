@@ -24,42 +24,106 @@ var givenDecimalRepresentations = {
   '9': '0.(1)',
   '10': '0.1'
 };
-var upperLimit = 9;
+var upperLimit = 25;
 
-var precision = 350;
+var precision = 150;
 var Decimal = require('decimal.js').config({precision: precision});
 
-var _ = require('lodash');
-
-String.prototype.doesTerminate = function (precision) {
-  // This helper function returns a boolean whether our decimal representation terminates
+String.prototype.doesTerminate = function () {
+  // Does our decimal representation terminate?
   return this.length < precision;
 };
 
-Array.prototype.dropRight = function (n) {
-  // This helper function lets us chain _.dropRight() more cleanly
-  return _.dropRight(this, n);
-};
 
-String.prototype.findPatternInString = function (precision) {
-  if (this.doesTerminate(precision)) {
+String.prototype.findCycleInString = function () {
+  // handle the simple case where the decimal terminates
+  if (this.doesTerminate()) {
     return this.toString();
+    // return 0;
   }
 
-  var patternStart = 2;
-  var patternLength = 1;
-  this.split('').dropRight().forEach(function (character, index, array) {
-    if (character !== array[patternStart]) {
-      patternStart = index;
-      // console.log(patternStart);
+  var searchSpace = this.slice(2, -1); // ignore before decimal place & rounding errors
+  // console.log(searchSpace);
+  var cycleStart = 0;
+  var cycleEnd = 1;
+  searchSpace.split('').some(function (character, index) {
+    var re = new RegExp(character, 'g');
+    re.test(searchSpace); // let the RegEx find itself first
+    if (!re.test(searchSpace)) { // find next occurance of this character
+      // we didn't see this character again: we must not be in a cycle yet
+      cycleStart++;
+      return;
     }
+    var found = re.lastIndex - 1;
+    var cycleLength = found - index;
+    var cycle = searchSpace.slice(index, found);
+    var nextCycle = searchSpace.slice(found, found + cycleLength);
+    // console.log(index, re, found, cycleLength);
+    // console.log(cycle, nextCycle);
+    if (cycle === nextCycle) {
+      // we found a match!
+      cycleEnd = found;
+      return true;
+    }
+    // var next = array.slice(index + 1).indexOf(character);
+    // if (next === -1) {
+    //   cycleStart++;
+    //   return;
+    // }
+    if (index > 25) {
+      return true;
+    }
+
   });
-  return this.slice(0, patternStart) + '(' + this.slice(patternStart, patternStart + patternLength) + ')';
+  return '0.' + searchSpace.slice(0, cycleStart) + '(' + searchSpace.slice(cycleStart, cycleEnd) + ')';
+  // return cycleStart;
 };
 
-_.range(2, upperLimit).forEach(function (i) {
-  var decimal = Decimal.ONE.dividedBy(i).toString();
-  if (!decimal.doesTerminate(precision)) {
-    console.log(i, decimal.findPatternInString(precision), decimal);
-  }
+var Heap = require('heap');
+var maxHeap = new Heap(function largestCycleLength(a, b) {
+  return b.cycleLength - a.cycleLength;
 });
+
+var _ = require('lodash');
+
+_.range(2, upperLimit).forEach(function (d) {
+  var info = {
+    d: d,
+    decimal: Decimal.ONE.dividedBy(d).toString(),
+  };
+  info.cycle = info.decimal.findCycleInString();
+  // if (!info.decimal.doesTerminate()) {
+  console.log(info);
+  // }
+  maxHeap.push(info);
+});
+
+// console.log('');
+// console.log(maxHeap.pop());
+// console.log(maxHeap.pop());
+// console.log(maxHeap.pop());
+// console.log(maxHeap.pop());
+// console.log(maxHeap.pop());
+
+function testPatternFinder(d) {
+  var decimal = Decimal.ONE.dividedBy(d).toString();
+  console.log(d, decimal.findCycleInString(precision), decimal);
+}
+
+// // cases of reciprocal cycles:
+// // 1. decimal terminates
+// testPatternFinder(2); // 0.5
+
+// // // 2. simple single digit repeating number
+// testPatternFinder(3); // 0.(3)
+
+// // // 3. non-repeating characters before cycle
+// testPatternFinder(6); // 0.1(6)
+
+// // // 4. multiple digit cycles
+// testPatternFinder(7); // 0.(142857)
+// /* the decimal representation of 1/7:
+// 14285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285714285
+// */
+
+// testPatternFinder(17); // 0.(0588235294117647)
