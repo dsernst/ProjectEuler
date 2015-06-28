@@ -19,3 +19,5 @@ for (var i = 0; i + digits <= thousandDigitNumber.length; i++) {
 }
 
 console.log(greatestProduct);
+
+// Completed on Sun, 1 Feb 2015, 23:20
