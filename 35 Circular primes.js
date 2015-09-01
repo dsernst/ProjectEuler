@@ -30,7 +30,8 @@ var sieve = (function buildSieve(num) {
 }(max));
 
 function isPrime(num) {
-  return sieve[num - 2];
+  if (num === 1) {return false; }
+  return sieve[num];
 }
 
 function isCircularPrime(number) {
@@ -45,5 +46,9 @@ function isCircularPrime(number) {
 // console.log(isCircularPrime(197)); // true
 // console.log(_.range(1, 100).filter(isCircularPrime)); // [ 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, 97 ]
 
-console.log(_.range(1, max).filter(isCircularPrime).length); // 45 [Finished in 11.5s]
+console.log(_.range(1, max).filter(isCircularPrime).length); // 55 [Finished in 12.3s]
 
+
+// Congratulations, the answer you gave to problem 35 is correct.
+
+// You are the 53084th person to have solved this problem.
