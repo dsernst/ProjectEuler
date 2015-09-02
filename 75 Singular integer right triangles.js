@@ -42,7 +42,7 @@ var pythagorianTripleSums = pythagorianTriples.map(_.sum);
 //       return false;
 //     }
 //     if (sum > number) {
-//       return false;
+//       return false; // might be exiting too soon, if array is not ordered by sums
 //     }
 //   });
 //   return isMultiple;
