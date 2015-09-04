@@ -13,7 +13,7 @@
 
 var should = require('should');
 
-var pf = require('primefactors');
+var pf = require('quick-primefactors');
 pf(14).should.eql([2, 7]);
 pf(15).should.eql([3, 5]);
 
@@ -29,14 +29,23 @@ function hasNDistinctPrimeFactors(n, number) {
 var i;
 var counter = 0;
 
-for (i = 1; i < 10000; i++) {
+void pf(1000000);
+
+for (i = 1; i < 1000000; i++) {
   if (hasNDistinctPrimeFactors(4, i)) {
     counter++;
-    console.log(counter + ':', i);
+    if (counter >= 3) {
+      console.log(counter + ':', i);
+    }
   } else {
     counter = 0;
   }
   if (counter === 4) {
-    console.log(i - 3, ' ftw');
+    console.log(i - 3, ' ftw'); // 134043 [Finished in 3.1s]
+    break;
   }
 }
+
+// Congratulations, the answer you gave to problem 47 is correct.
+
+// You are the 35155th person to have solved this problem.
