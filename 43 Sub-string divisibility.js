@@ -11,7 +11,8 @@
 // d[8]d[9]d[10]=289 is divisible by 17
 // Find the sum of all 0 to 9 pandigital numbers with this property.
 
-Number.prototype.toDigits = require('to-digits').extend;
+var toDigits = require('to-digits');
+Number.prototype.toDigits = toDigits.extend;
 
 function divideIntoSubstrings(number) {
   return number.toDigits().reduce(function (memo, digit, index) {
@@ -44,10 +45,25 @@ function hasWeirdPrimeDivisibility(number) {
 }
 // console.log(hasWeirdPrimeDivisibility(substrings)); // true
 
-var sum = 0;
 
 var isPandigital = require('is-pandigital');
 
+function joinAndTest(digits, start, end, primeIndex) {
+  return Number(digits.slice(start, end + 1).join('')) % primes[primeIndex] !== 0;
+}
+
+function quickHasWeirdDivisibility(number) {
+  var digits = toDigits(number);
+  var i;
+  for (i = 6; i >= 0; i--) {
+    if (joinAndTest(digits, 2 + i, 4 + i, i)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+var sum = 0;
 var i;
 for (i = 123456789; i <= 9876543210; i++) {
   if (i % 150000 === 0) {
@@ -55,7 +71,7 @@ for (i = 123456789; i <= 9876543210; i++) {
   }
   if (isPandigital(i)) {
     // console.log(i, 'isPandigital');
-    if (hasWeirdPrimeDivisibility(i)) {
+    if (quickHasWeirdDivisibility(i)) {
       sum += i;
       console.log(i, 'hasWeirdPrimeDivisibility. new sum:', sum);
     }
