@@ -17,23 +17,38 @@ var isPentagonal = require('is-pentagonal');
 [1, 5, 12, 22, 35].every(isPentagonal).should.eql(true);
 [0, 4, 11, 21, 34].some(isPentagonal).should.eql(false);
 
+function isHexagonal(number) {
+  var root = (1 + Math.sqrt(1 + 8 * number)) / 4;
+  return Math.floor(root) === root;
+}
+[1, 6, 15, 28, 45].every(isHexagonal).should.eql(true);
+
+function triangular(n) {
+  return n * (n + 1) / 2;
+}
+[1, 2, 3, 4, 5].map(triangular).should.eql([1, 3, 6, 10, 15]);
+
 function hexagonal(n) {
   return n * (2 * n - 1);
 }
 [1, 2, 3, 4, 5].map(hexagonal).should.eql([1, 6, 15, 28, 45]);
 
 var sample = 40755;
-(isTriangular(sample)).should.eql(true);
-(isPentagonal(sample)).should.eql(true);
+isTriangular(sample).should.eql(true);
+isPentagonal(sample).should.eql(true);
+isHexagonal(sample).should.eql(true);
+triangular(285).should.eql(sample);
 hexagonal(143).should.eql(sample);
 
 var number, n;
-for (n = 144; n < 10000; n++) {
-  number = hexagonal(n);
-  if (isTriangular(n) && isPentagonal(n)) {
-    console.log(number); // 87990 [Finished in 0.1s]
-    break;
+for (n = 1; n < 1000000; n++) {
+  number = triangular(n);
+  if (isHexagonal(number) && isPentagonal(number)) {
+    console.log(number); // 1533776805 [Finished in 0.2s]
+    // break;
   }
 }
 
-// Sorry, but the answer you gave appears to be incorrect.
+// Congratulations, the answer you gave to problem 45 is correct.
+
+// You are the 44703rd person to have solved this problem.
