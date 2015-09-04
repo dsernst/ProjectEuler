@@ -11,71 +11,25 @@
 // d[8]d[9]d[10]=289 is divisible by 17
 // Find the sum of all 0 to 9 pandigital numbers with this property.
 
-var toDigits = require('to-digits');
-Number.prototype.toDigits = toDigits.extend;
-
-function divideIntoSubstrings(number) {
-  return number.toDigits().reduce(function (memo, digit, index) {
-    index++;
-    if (index === 1) {
-      return memo;
-    }
-    if (index <= 8) {
-      memo.push([digit]);
-    }
-    if (3 <= index && index <= 9) {
-      memo[index - 3].push(digit);
-    }
-    if (4 <= index) {
-      memo[index - 4].push(digit);
-    }
-    return memo;
-  }, []).map(function (subarray) {
-    return Number(subarray.join(''));
-  });
-}
-var substrings = divideIntoSubstrings(1406357289);
-// console.log(substrings); // [ 406, 63, 635, 357, 572, 728, 289 ]
+var _ = require('lodash');
 
 var primes = [2, 3, 5, 7, 11, 13, 17];
-function hasWeirdPrimeDivisibility(number) {
-  return divideIntoSubstrings(number).every(function (value, index) {
-    return value % primes[index] === 0;
+function checkDivisibility(digits) {
+  return [6, 5, 4, 3, 2, 1, 0].every(function (i) {
+    return Number(digits.slice(i + 1, i + 4).join('')) % primes[i] === 0;
   });
 }
-// console.log(hasWeirdPrimeDivisibility(substrings)); // true
+// console.log(checkDivisibility(1406357289));
 
+var pandigitals = require('heaps-permute')(_.range(10));
 
-var isPandigital = require('is-pandigital');
-
-function joinAndTest(digits, start, end, primeIndex) {
-  return Number(digits.slice(start, end + 1).join('')) % primes[primeIndex] !== 0;
+function joinDigits(digits) {
+  return Number(digits.join(''));
 }
 
-function quickHasWeirdDivisibility(number) {
-  var digits = toDigits(number);
-  var i;
-  for (i = 6; i >= 0; i--) {
-    if (joinAndTest(digits, 2 + i, 4 + i, i)) {
-      return false;
-    }
-  }
-  return true;
-}
+console.log(_.sum(pandigitals.filter(checkDivisibility).map(joinDigits))); // 16695334890 [Finished in 8.0s]
 
-var sum = 0;
-var i;
-for (i = 123456789; i <= 9876543210; i++) {
-  if (i % 150000 === 0) {
-    console.log(i);
-  }
-  if (isPandigital(i)) {
-    // console.log(i, 'isPandigital');
-    if (quickHasWeirdDivisibility(i)) {
-      sum += i;
-      console.log(i, 'hasWeirdPrimeDivisibility. new sum:', sum);
-    }
-  }
-}
 
-console.log(sum);
+// Congratulations, the answer you gave to problem 43 is correct.
+
+// You are the 35956th person to have solved this problem.
